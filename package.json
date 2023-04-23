@@ -32,7 +32,8 @@
       "scripting"
     ],
     "host_permissions": [
-      "https://*/*"
+      "https://*/*",
+      "http://localhost:8080/*"
     ]
   }
 }

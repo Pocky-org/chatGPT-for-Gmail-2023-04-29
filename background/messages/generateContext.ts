@@ -44,7 +44,7 @@ const handler: PlasmoMessaging.MessageHandler<
         if (response.ok) {
           const responseData = await response.json()
           console.log("Response from backend:", responseData)
-          res.send("backendRes" + responseData)
+          res.send("backendRes" + JSON.stringify(responseData))
         } else {
           throw new Error(`HTTP error ${response.status}`)
         }

@@ -2,12 +2,16 @@ from flask import Flask, request, Response
 from urllib.request import Request, urlopen
 import json
 from flask_cors import CORS
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 app = Flask(__name__)
 CORS(app)
 
-APPID = "dj00aiZpPU5vR0Z4UXFJNHFaWSZzPWNvbnN1bWVyc2VjcmV0Jng9MzE-"  
+APPID = os.environ["PLASMO_PUBLIC_YAHOO_CLIENT_ID"]
 URL = "https://jlp.yahooapis.jp/KouseiService/V2/kousei"
 
 def post(query):

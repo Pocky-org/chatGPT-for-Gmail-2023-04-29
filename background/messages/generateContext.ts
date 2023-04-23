@@ -1,5 +1,3 @@
-import axios from "axios"
-
 import type { PlasmoMessaging } from "@plasmohq/messaging"
 
 // export type RequestBody = {

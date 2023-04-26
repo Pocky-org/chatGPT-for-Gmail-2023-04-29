@@ -36,11 +36,13 @@ const PlasmoInline = () => {
   }
   return (
     <>
-      <ModalOverlay
-        showFlag={showModal}
-        setShowModal={setShowModal}
-        response={response}
-      />
+      {setShowModal && (
+        <ModalOverlay
+          showFlag={showModal}
+          setShowModal={setShowModal}
+          response={response}
+        />
+      )}
 
       <button
         onClick={() => {

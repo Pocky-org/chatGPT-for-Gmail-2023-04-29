@@ -24,7 +24,7 @@ async function sendRequestToBackend(result, res) {
     if (response.ok) {
       const responseData = await response.json()
       console.log("Response from backend:", responseData)
-      res.send("backendRes" + JSON.stringify(responseData))
+      res.send(JSON.stringify(responseData.result.suggestions))
     } else {
       throw new Error(`HTTP error ${response.status}`)
     }

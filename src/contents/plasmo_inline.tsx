@@ -1,4 +1,3 @@
-import someCoolImage from "data-base64:~assets/pocky.png"
 import pretzImage from "data-base64:~assets/pretz.jpeg"
 import cssText from "data-text:~/src/style.css"
 import type { PlasmoCSConfig, PlasmoGetInlineAnchor } from "plasmo"
@@ -6,10 +5,7 @@ import React from "react"
 import { useState } from "react"
 import { createRoot } from "react-dom/client"
 
-import { sendToBackground } from "@plasmohq/messaging/"
-
 import Modal from "./modal"
-
 
 export const config: PlasmoCSConfig = {
   matches: ["https://mail.google.com/*"]
@@ -20,6 +16,7 @@ export const config: PlasmoCSConfig = {
    */
 function createModal() {
   const container = document.createElement("div")
+  container.id ="chatGPT-for-Gmail"
   document.body.after(container)
   createRoot(container).render(<Modal showFlag={true} />)
 }

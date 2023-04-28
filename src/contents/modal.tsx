@@ -1,7 +1,6 @@
 import cssText from "data-text:~/src/style.css"
 import type { PlasmoCSConfig } from "plasmo"
 import React, { useState } from "react"
-import { createRoot } from "react-dom/client"
 
 import { sendToBackground } from "@plasmohq/messaging"
 
@@ -57,8 +56,20 @@ export default function Modal(arg: ModalProps) {
   let display = showFlag ? "block" : "none"
 
   const closeModal = () => {
-    display = "none"
+    const container = document.getElementById("chatGPT-for-Gmail")
+    container.remove()
   }
+
+  {/* <svg
+    className="w-5 h-5"
+    fill="currentColor"
+    viewBox="0 0 20 20"
+    xmlns="http://www.w3.org/2000/svg">
+    <path
+      fillRule="evenodd"
+      d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+      clipRule="evenodd"></path>
+  </svg> */}
   return (
     <>
       <div
@@ -66,41 +77,38 @@ export default function Modal(arg: ModalProps) {
           display: display,
           position: "absolute",
           border: "1px solid #ccc",
-          width: "70%",
-          height: "60%",
+          width: "600px",
+          height: "400px",
           top: "50%",
           left: "50%",
-          backgroundColor: "white",
           transform: "translate(-50%, -50%)",
-          textAlign: "center",
-          zIndex: 2147483550,
+          backgroundColor: "white",
+          zIndex: 1000,
+          padding: '24px',
           borderRadius: "8px"
-        }}>
-        {/* モーダル */}
-
-        <div className="w-[900px] h-[500px] max-w-2xl top-0 left-0 z-50 p-4  md:inset-0 max-h-full absolute">
+        }}
+        >
+        <div className=" w-full">
+          <div className=" w-full flex items-center justify-between">
+            <div className="text-xl font-semibold text-gray-900">
+              Response modal
+            </div>
+            <button
+                onClick={closeModal}
+                className="text-gray-400 flex justify-end bg-transparent w-5 hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5"
+                data-modal-hide="staticModal">
+                ×
+            </button>
+          </div>
           <div id="overlay" className="bg-white rounded-lg shadow">
             <div id="modalContent">
-              <div className="flex items-start justify-between p-4 border-b rounded-t">
-                <h3 className="text-xl font-semibold text-gray-900">
-                  Response modal
-                </h3>
-                <button
-                  onClick={closeModal}
-                  type="button"
-                  className="text-gray-400 bg-transparent w-5 hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center"
-                  data-modal-hide="staticModal">
-                  ×
-                </button>
-              </div>
-              <button
-                onClick={async () => {
-                  const chatGptResponse = await fetchedChatGptFromContext()
-                  setChatGPTContext(chatGptResponse.content)
-                  console.log({
-                    chatGptResponse
-                  })
-                }}>
+              <button onClick={async()=>{
+                const chatGptResponse = await fetchedChatGptFromContext()
+                setChatGPTContext(chatGptResponse.content)
+                console.log({
+                  chatGptResponse,
+                })
+              }}>
                 chatGPTのfetch
               </button>
               <div className=" w-[600px]">

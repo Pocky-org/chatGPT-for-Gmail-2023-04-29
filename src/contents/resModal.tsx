@@ -12,8 +12,19 @@ export const getStyle = () => {
   return style
 }
 
-const ResModal = ({ showFlag }: { showFlag: boolean }) => {
+type ModalProps ={
+  showFlag: boolean
+  ChatGptResponse: string
+}
+
+const ResModal = ( arg : ModalProps) => {
+  const { showFlag, ChatGptResponse } = arg
   const display = showFlag ? "block" : "none"
+  console.log({
+    ChatGptResponse
+    
+  })
+
 
   // const closeModal = () => {
   //   setShowModal(false)
@@ -73,13 +84,13 @@ const ResModal = ({ showFlag }: { showFlag: boolean }) => {
                     </div> */}
 
               {/* chatGPT Area */}
-              {/* {ChatGptResponce && (
+              {ChatGptResponse && (
                       <div className="p-6 space-y-6">
                         <p className="text-base leading-relaxed text-gray-500">
-                          {ChatGptResponce}
+                          {ChatGptResponse}
                         </p>
                       </div>
-                    )} */}
+                    )}
             </div>
           </div>
         </div>
@@ -88,8 +99,8 @@ const ResModal = ({ showFlag }: { showFlag: boolean }) => {
   )
 }
 
-const container = document.createElement("my-extension-root")
-document.body.after(container)
-createRoot(container).render(<ResModal showFlag={false} />)
+// const container = document.createElement("my-extension-root")
+// document.body.after(container)
+// createRoot(container).render(<ResModal showFlag={false} />)
 
 export default ResModal

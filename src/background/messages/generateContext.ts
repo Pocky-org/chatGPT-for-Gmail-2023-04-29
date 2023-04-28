@@ -6,18 +6,18 @@ import type { PlasmoMessaging } from "@plasmohq/messaging"
 
 async function doProofreading(result, res) {
   console.log({
-    chatGPT: result.content,
+    chatGPT: result.text.text,
     result,
     res
   })
   try {
-    const response = await fetch("http://localhost:8080/api/process-input", {
+    const response = await fetch("http://localhost:8888/api/process-input", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        input: result.content
+        input: result.text
       })
     })
     console.log({
@@ -52,7 +52,7 @@ const handler: PlasmoMessaging.MessageHandler<
     },
     async (result) => {
       console.log("Background script got callback after injection")
-      console.log("getGmail", result[0].result)
+      console.log("getGmail", body)
       // result[0].resultに値が入っているので，それを校正に渡す
 
       doProofreading(body, res)

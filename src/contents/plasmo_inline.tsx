@@ -89,7 +89,7 @@ const PlasmoInline = () => {
         className="ml-2"
         onClick={async () => {
           openModal()
-         const res =  await fetchedChatGptResponseToSetContext()
+          const res =  await fetchedChatGptResponseToSetContext()
           await  fetchedKoseiDataToSetContext(res)
 
           // createOverlay(true)

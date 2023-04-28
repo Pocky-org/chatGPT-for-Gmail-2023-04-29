@@ -32,7 +32,7 @@ const ReadProofDataList: React.FC<ReadProofDataListProps> = ({ data = [] }) => {
             className={`${
               data.length > 0 ? "block" : "hidden"
             } mt-4 block text-sm text-gray-900 font-bold`}>
-            改善できる可能性のあるもの👇
+            ✅ 改善できる可能性のあるもの
           </div>
           {data.map((value, index) => (
             <div

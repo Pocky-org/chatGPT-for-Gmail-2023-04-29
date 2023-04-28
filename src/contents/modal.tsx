@@ -51,18 +51,6 @@ export default function Modal(arg: ModalProps) {
     })()
   }, [])
 
-  {
-    /* <svg
-    className="w-5 h-5"
-    fill="currentColor"
-    viewBox="0 0 20 20"
-    xmlns="http://www.w3.org/2000/svg">
-    <path
-      fillRule="evenodd"
-      d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-      clipRule="evenodd"></path>
-  </svg> */
-  }
   return (
     <>
       <div
@@ -73,7 +61,7 @@ export default function Modal(arg: ModalProps) {
         <div className="w-full">
           <div className=" w-full flex items-center justify-between">
             <div className="mb-2 text-lg font-bold tracking-tight text-gray-800">
-              ChatGpt for Gmail
+              ChatGPT for Gmail
             </div>
             <div>
               <button

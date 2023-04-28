@@ -4,13 +4,12 @@ import type { PlasmoMessaging } from "@plasmohq/messaging"
 //   getGmail: () => string
 // }
 
-function getGmailContext(): string {
-  const replyClass = document.getElementsByClassName("Am Al editable")
-  console.log("replyClass", replyClass)
-  return replyClass[0].textContent
-}
-
-async function sendRequestToBackend(result, res) {
+async function doProofreading(result, res) {
+  console.log({
+    chatGPT: result.content,
+    result,
+    res
+  })
   try {
     const response = await fetch("http://localhost:8080/api/process-input", {
       method: "POST",
@@ -18,8 +17,11 @@ async function sendRequestToBackend(result, res) {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        input: result[0].result
+        input: result.content
       })
+    })
+    console.log({
+      afterKosei: response
     })
     if (response.ok) {
       const responseData = await response.json()
@@ -33,17 +35,17 @@ async function sendRequestToBackend(result, res) {
     res.send("Error: " + err.message)
   }
 }
-
 export type RequestResponse = string
 
 const handler: PlasmoMessaging.MessageHandler<
   // RequestBody,
   RequestResponse
 > = async (req, res) => {
+  const { tabId, body } = req
   chrome.scripting.executeScript(
     {
       target: {
-        tabId: req.tabId // the tab you want to inject into
+        tabId: tabId // the tab you want to inject into
       },
       world: "MAIN", // MAIN to access the window object
       func: getGmailContext // function to inject
@@ -52,9 +54,16 @@ const handler: PlasmoMessaging.MessageHandler<
       console.log("Background script got callback after injection")
       console.log("getGmail", result[0].result)
       // result[0].resultに値が入っているので，それを校正に渡す
-      sendRequestToBackend(result, res)
+
+      doProofreading(body, res)
     }
   )
+}
+
+function getGmailContext(): string {
+  const replyClass = document.getElementsByClassName("Am Al editable")
+  console.log("replyClass", replyClass)
+  return replyClass[0].textContent
 }
 
 export default handler

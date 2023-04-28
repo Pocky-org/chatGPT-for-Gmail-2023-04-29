@@ -47,14 +47,21 @@ const PlasmoInline = () => {
   }
 
   //校正API:
-  const fetchedKoseiDataToSetContext = async () => {
+  const fetchedKoseiDataToSetContext = async (chatGptResponse: string) => {
     const tabID = await sendToBackground({
       name: "getCurrentTabID"
     })
     const res = await sendToBackground({
       name: "generateContext",
-      tabId: tabID
+      tabId: tabID,
+      body: {
+        text: chatGptResponse
+      }
     })
+    console.log({
+      'generated':res
+    })
+    createModal(res)
     setContext(res)
   }
   //chatGptの返答スピードが遅いので,overlayの方で管理したほうが良さそう
@@ -70,8 +77,8 @@ const PlasmoInline = () => {
       name: "generateContextWIthChatGpt",
       tabId: tabID
     })
-    createModal(res)
     setIsLoading(false)
+    return res
   }
 
   
@@ -82,8 +89,8 @@ const PlasmoInline = () => {
         className="ml-2"
         onClick={async () => {
           openModal()
-          await fetchedChatGptResponseToSetContext()
-          await  fetchedKoseiDataToSetContext()
+         const res =  await fetchedChatGptResponseToSetContext()
+          await  fetchedKoseiDataToSetContext(res)
 
           // createOverlay(true)
           // createModal(ChatGptResponse)

@@ -67,7 +67,7 @@ const handler: PlasmoMessaging.MessageHandler<
       const response = await chatCompletion(messages)
       if (response) {
         console.log("Response from backend: ", response)
-        res.send(JSON.stringify(response))
+        res.send(response)
       } else {
         throw new Error(`HTTP error response`)
       }

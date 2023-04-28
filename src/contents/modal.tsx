@@ -11,8 +11,8 @@ export const config: PlasmoCSConfig = {
 }
 
 type ModalProps = {
-  showFlag: boolean
-  // ChatGptResponse: string
+  showFlag: boolean,
+  closeModal: () => void
 }
 
 export type ReadPloofData = {
@@ -24,20 +24,23 @@ export type ReadPloofData = {
   word: string
 }
 
+export const getStyle = () => {
+  const style = document.createElement("style")
+  style.textContent = cssText
+  return style
+}
+
+
 export default function Modal(arg: ModalProps) {
-  const { showFlag } = arg
+  const { showFlag, closeModal } = arg
+
   const [emailContext, setEmailContext] = useState("")
   const [emailResRequest, setEmailResRequest] = useState(
     "このメールに対する返答を書いてください。"
   )
   const [chatGPTContext, setChatGPTContext] = useState("")
   const [proofreadContext, setProofreadContext] = useState<ReadPloofData[]>([])
-  let display = showFlag ? "block" : "none"
 
-  const closeModal = () => {
-    const container = document.getElementById("chatGPT-for-Gmail")
-    container.remove()
-  }
 
   /**
    * 初回レンダリングのみ
@@ -64,33 +67,26 @@ export default function Modal(arg: ModalProps) {
   return (
     <>
       <div
-        style={{
-          display: display,
-          position: "absolute",
-          border: "1px solid #ccc",
-          width: "600px",
-          height: "400px",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          backgroundColor: "white",
-          zIndex: 1000,
-          padding: "24px",
-          borderRadius: "8px"
-        }}>
-        <div className=" w-full">
+        className={`${
+          showFlag ? 'block' : 'hidden'
+        } fixed top-1/2 overflow-y-auto left-1/2 border transform
+        -translate-x-1/2 -translate-y-1/2 border-black  w-[600px] h-[600px]  bg-white z-50 p-6 rounded-lg shadow-xl`}
+        >
+        <div className="w-full">
           <div className=" w-full flex items-center justify-between">
-            <div className="text-xl font-semibold text-gray-900">
+            <div className="text-xl font-semibold text-red-500">
               Response modal
             </div>
-            <button
-              onClick={closeModal}
-              className="text-gray-400 flex justify-end bg-transparent w-5 hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5"
-              data-modal-hide="staticModal">
-              ×
-            </button>
+            <div>
+              <button
+                  onClick={closeModal}
+                  className=" w-10 text-gray-400 flex justify-end bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-2xl p-1.5 border border-black"
+                  data-modal-hide="staticModal">
+                  ×
+              </button>
+            </div>
           </div>
-          <div id="overlay" className="bg-white rounded-lg shadow">
+          <div id="overlay">
             <div id="modalContent">
               <div>Email context</div>
               <div>
@@ -125,10 +121,10 @@ export default function Modal(arg: ModalProps) {
                 }}>
                 chatGPTのfetch
               </button>
-              <div className=" w-[600px]">
+              <div className=" mt-1 w-[600px]">
                 {chatGPTContext && (
                   <textarea
-                    cols={40}
+                    cols={60}
                     rows={10}
                     className=" w-full overflow-y-auto p-4 block space-y-6 text-base leading-relaxed text-gray-500"
                     value={chatGPTContext}
@@ -137,16 +133,13 @@ export default function Modal(arg: ModalProps) {
                 )}
               </div>
               <button
+              className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
                 onClick={async () => {
                   const proofreadResponse = await fetchedProofreadFromContext(
                     chatGPTContext
                   )
 
                   setProofreadContext(proofreadResponse)
-                  console.log({
-                    chatGPTContext,
-                    proofreadResponse
-                  })
                 }}>
                 校正する
               </button>
@@ -155,6 +148,7 @@ export default function Modal(arg: ModalProps) {
               )}
 
               <button
+              className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
                 onClick={() => {
                   insertContext(chatGPTContext)
                 }}>
@@ -238,9 +232,4 @@ async function fetchedProofreadFromContext(
     generated: res
   })
   return JSON.parse(res)
-}
-export const getStyle = () => {
-  const style = document.createElement("style")
-  style.textContent = cssText
-  return style
 }

@@ -3,24 +3,12 @@ import cssText from "data-text:~/src/style.css"
 import type { PlasmoCSConfig, PlasmoGetInlineAnchor } from "plasmo"
 import React from "react"
 import { useState } from "react"
-import { createRoot } from "react-dom/client"
 
 import Modal from "./modal"
 
 export const config: PlasmoCSConfig = {
   matches: ["https://mail.google.com/*"]
 }
-
-/**
- * 真ん中の大きなモーダル作成
- */
-function createModal() {
-  const container = document.createElement("div")
-  container.id ="chatGPT-for-Gmail"
-  document.body.after(container)
-  createRoot(container).render(<Modal showFlag={true} />)
-}
-
 
 /**
  * ボタンのアンカー
@@ -32,8 +20,8 @@ export const getInlineAnchor: PlasmoGetInlineAnchor = () =>
 export default function  PlasmoInline () {
   const [showModal, setShowModal] = useState(false)
 
-  const openModal = () => {
-    setShowModal(true)
+  const closeModal =()=> {
+    setShowModal(false)
   }
 
   return (
@@ -41,10 +29,7 @@ export default function  PlasmoInline () {
       <button
         className="ml-2"
         onClick={async () => {
-          openModal()
-          createModal()
-          // createOverlay(true)
-          // createModal(ChatGptResponse)
+          setShowModal(true)
         }}>
         <img
           className="w-7 h-7 rounded-full"
@@ -52,6 +37,11 @@ export default function  PlasmoInline () {
           alt="Some pretty cool image"
         />
       </button>
+      {showModal ? (
+        <Modal showFlag={showModal} closeModal={closeModal} />
+      ) : (
+        <></>
+      )}
     </>
   )
 }

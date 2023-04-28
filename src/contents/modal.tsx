@@ -112,9 +112,10 @@ export default function Modal(arg: ModalProps) {
               <button
                 onClick={async () => {
                   const chatGptResponse = await fetchedChatGptFromContext(
+                    emailContext,
                     emailResRequest
                   )
-                  setChatGPTContext(chatGptResponse.content)
+                  setChatGPTContext(chatGptResponse)
                   console.log({
                     chatGptResponse
                   })
@@ -200,7 +201,10 @@ function getRecievedGmailContext(): string {
 /**
  * ChatGPTからの返答を受け取る
  */
-async function fetchedChatGptFromContext(emailResRequest: string) {
+async function fetchedChatGptFromContext(
+  emailContext: string,
+  emailResRequest: string
+) {
   const tabID = await sendToBackground({
     name: "getCurrentTabID"
   })
@@ -209,7 +213,8 @@ async function fetchedChatGptFromContext(emailResRequest: string) {
     name: "generateContextWIthChatGpt",
     tabId: tabID,
     body: {
-      text: emailResRequest
+      email: emailContext,
+      request: emailResRequest
     }
   })
   return res

@@ -5,6 +5,10 @@ export type Message = {
   role: "user" | "system" | "assistant"
   content: string
 }
+export type RequestBody = {
+  email: string
+  request: string
+}
 
 const apiKey = `${process.env.PLASMO_PUBLIC_OPENAI_API_KEY}`
 
@@ -40,15 +44,16 @@ export const chatCompletion = async (
 export type RequestResponse = string
 
 const handler: PlasmoMessaging.MessageHandler<
-  // RequestBody,
+  RequestBody,
   RequestResponse
 > = async (req, res) => {
+  const { tabId } = req
   console.log("req.tabId", req.tabId)
 
   chrome.scripting.executeScript(
     {
       target: {
-        tabId: req.tabId // the tab you want to inject into
+        tabId: tabId // the tab you want to inject into
       },
       world: "MAIN", // MAIN to access the window object
       func: getRecievedGmailContext // function to inject
@@ -56,19 +61,25 @@ const handler: PlasmoMessaging.MessageHandler<
     async (result) => {
       console.log("Background script got callback after injection")
       console.log("getGmail", result[0].result)
+      let emailContent: string
+      if (req.body.email) {
+        emailContent = req.body.email
+      } else {
+        emailContent = result[0].result
+      }
+      const contet = `${req.body.request} ${emailContent}`
       const messages: Message[] = [
         {
           role: "user",
-          content: `${req.body.text} ${result[0].result}`
+          content: contet
         }
       ]
-      console.log(req.body)
       console.log("messages.content", messages[0].content)
       // result[0].resultに値が入っているので，それをchatGPTに渡す
       const response = await chatCompletion(messages)
       if (response) {
-        console.log("Response from backend: ", response)
-        res.send(response)
+        console.log("Response from backend: ", response.content)
+        res.send(response.content)
       } else {
         throw new Error(`HTTP error response`)
       }

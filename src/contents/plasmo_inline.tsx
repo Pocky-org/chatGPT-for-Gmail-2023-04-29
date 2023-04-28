@@ -4,10 +4,15 @@ import cssText from "data-text:~/src/style.css"
 import type { PlasmoCSConfig, PlasmoGetInlineAnchor } from "plasmo"
 import React from "react"
 import { useState } from "react"
+import { createRoot } from "react-dom/client"
 
 import { sendToBackground } from "@plasmohq/messaging/"
 
 import ModalOverlay from "./modal_overlay"
+// 検証
+import ResModal from "./resModal"
+//成功したex
+import Main from "./testCreateOverlayDom"
 
 export const getStyle = () => {
   const style = document.createElement("style")
@@ -17,6 +22,25 @@ export const getStyle = () => {
 
 export const config: PlasmoCSConfig = {
   matches: ["https://mail.google.com/*"]
+}
+
+// function createOverlay(input: boolean) {
+//   const container = document.createElement("div")
+//   document.body.after(container)
+//   createRoot(container).render(
+//     <Main
+//       translatedText={"ここにテキストが入る"}
+//       originalText={"ここにテキストが入る"}
+//       targetLang={"JA"}
+//       showModal={input}
+//     />
+//   )
+// }
+
+function createModal() {
+  const container = document.createElement("div")
+  document.body.after(container)
+  createRoot(container).render(<ResModal showFlag={true} />)
 }
 
 export const getInlineAnchor: PlasmoGetInlineAnchor = () =>
@@ -34,6 +58,7 @@ const PlasmoInline = () => {
   const openModal = () => {
     setShowModal(true)
   }
+
   //校正API:
   const fetchedKoseiDataToSetContext = async () => {
     const tabID = await sendToBackground({
@@ -62,22 +87,26 @@ const PlasmoInline = () => {
   }
   return (
     <>
-      {setShowModal && (
-        <ModalOverlay
-          showFlag={showModal}
-          setShowModal={setShowModal}
-          response={response}
-          ChatGptResponce={ChatGptResponce}
-          setIsLoading={setIsLoading}
-        />
-      )}
+      {/* {showModal && (
+        <>
+          <ModalOverlay
+            showFlag={showModal}
+            setShowModal={setShowModal}
+            response={response}
+            ChatGptResponce={ChatGptResponce}
+            setIsLoading={setIsLoading}
+          />
+        </>
+      )} */}
 
       {/* Chat GPTに投げる */}
       <button
         className="ml-2"
         onClick={() => {
           openModal()
-          fetchedChatGptResponceToSetContext()
+          // fetchedChatGptResponceToSetContext() //一旦削除
+          // createOverlay(true)
+          createModal()
         }}>
         <img
           className="w-7 h-7 rounded-full"

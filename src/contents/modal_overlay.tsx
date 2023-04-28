@@ -1,7 +1,8 @@
 import cssText from "data-text:~/src/style.css"
 import type { PlasmoCSConfig } from "plasmo"
-import type { PlasmoGetOverlayAnchor } from "plasmo"
+// import type { PlasmoGetOverlayAnchor } from "plasmo"
 import React from "react"
+import { createRoot } from "react-dom/client"
 
 export const getStyle = () => {
   const style = document.createElement("style")
@@ -13,9 +14,6 @@ export const config: PlasmoCSConfig = {
   matches: ["https://mail.google.com/*"]
 }
 
-export const getOverlayAnchor: PlasmoGetOverlayAnchor = () =>
-  document.querySelector("V3 aam")
-
 const ModalOverlay = (props) => {
   const { showFlag, setShowModal, response, ChatGptResponce, setIsLoading } =
     props
@@ -26,7 +24,7 @@ const ModalOverlay = (props) => {
     <>
       {showFlag ? (
         <div className="">
-          <div className="relative w-full max-w-2xl max-h-full fixed top-0 left-0 right-0 z-50 w-full p-4  md:inset-0 h-[calc(100%-1rem)] max-h-full">
+          <div className="w-full max-w-2xl max-h-full top-0 left-0 z-50 w-full p-4  md:inset-0 h-[calc(100%-1rem)] max-h-full absolute">
             <div id="overlay" className="bg-white rounded-lg shadow">
               <div id="modalContent">
                 <div className="flex items-start justify-between p-4 border-b rounded-t">
@@ -50,7 +48,6 @@ const ModalOverlay = (props) => {
                     </svg>
                   </button>
                 </div>
-                {/* modal body */}
                 {/* Loading... */}
                 {setIsLoading && <div>Loading...</div>}
                 {/* kosei Area */}
@@ -79,6 +76,12 @@ const ModalOverlay = (props) => {
       )}
     </>
   )
+}
+
+export const render = async ({ createRootContainer }) => {
+  const rootContainer = await createRootContainer()
+  const root = createRoot(rootContainer)
+  root.render(<ModalOverlay />)
 }
 
 export default ModalOverlay

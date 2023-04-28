@@ -59,9 +59,10 @@ const handler: PlasmoMessaging.MessageHandler<
       const messages: Message[] = [
         {
           role: "user",
-          content: `次のメール文に対する適切なメール返信文を日本語で書いてください。${result[0].result}`
+          content: `${req.body.text} ${result[0].result}`
         }
       ]
+      console.log(req.body)
       console.log("messages.content", messages[0].content)
       // result[0].resultに値が入っているので，それをchatGPTに渡す
       const response = await chatCompletion(messages)

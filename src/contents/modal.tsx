@@ -1,6 +1,6 @@
 import cssText from "data-text:~/src/style.css"
 import type { PlasmoCSConfig } from "plasmo"
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 
 import { sendToBackground } from "@plasmohq/messaging"
 
@@ -26,6 +26,10 @@ export type ReadPloofData = {
 
 export default function Modal(arg: ModalProps) {
   const { showFlag } = arg
+  const [emailContext, setEmailContext] = useState("")
+  const [emailResRequest, setEmailResRequest] = useState(
+    "このメールに対する返答を書いてください。"
+  )
   const [chatGPTContext, setChatGPTContext] = useState("")
   const [proofreadContext, setProofreadContext] = useState<ReadPloofData[]>([])
   let display = showFlag ? "block" : "none"
@@ -34,6 +38,16 @@ export default function Modal(arg: ModalProps) {
     const container = document.getElementById("chatGPT-for-Gmail")
     container.remove()
   }
+
+  /**
+   * 初回レンダリングのみ
+   */
+  useEffect(() => {
+    ;(async () => {
+      const context = await getContext()
+      setEmailContext(context)
+    })()
+  }, [])
 
   {
     /* <svg
@@ -78,9 +92,32 @@ export default function Modal(arg: ModalProps) {
           </div>
           <div id="overlay" className="bg-white rounded-lg shadow">
             <div id="modalContent">
+              <div>Email context</div>
+              <div>
+                {emailContext && (
+                  <textarea
+                    cols={40}
+                    rows={10}
+                    className=" w-full overflow-y-auto p-4 block text-base text-gray-500"
+                    value={emailContext}
+                    onChange={(event) => setEmailContext(event.target.value)}
+                  />
+                )}
+              </div>
+              <div>どのように返答したいか簡潔に記述してください</div>
+              <div>
+                <input
+                  className=" w-full overflow-y-auto p-4 block text-base text-gray-500"
+                  value={emailResRequest}
+                  onChange={(event) => setEmailResRequest(event.target.value)}
+                />
+              </div>
+
               <button
                 onClick={async () => {
-                  const chatGptResponse = await fetchedChatGptFromContext()
+                  const chatGptResponse = await fetchedChatGptFromContext(
+                    emailResRequest
+                  )
                   setChatGPTContext(chatGptResponse.content)
                   console.log({
                     chatGptResponse
@@ -137,16 +174,49 @@ function insertContext(context: string) {
 }
 
 /**
+ * 最初にメールの内容を取得
+ */
+async function getContext() {
+  const tabID = await fetchedContextTabID()
+  console.log({ tabID })
+  const contextData = getRecievedGmailContext()
+  console.log({ contextData })
+  return contextData
+}
+
+/**
+ * メールの内容を含んだtabIDを返す
+ */
+async function fetchedContextTabID() {
+  const tabID = await sendToBackground({
+    name: "getCurrentTabID"
+  })
+  return tabID
+}
+
+/**
+ *メールの内容を取得する
+ */
+function getRecievedGmailContext(): string {
+  const replyClass = document.getElementsByClassName("a3s aiL ")
+  console.log("replyClass", replyClass)
+  return replyClass[0].textContent
+}
+
+/**
  * ChatGPTからの返答を受け取る
  */
-async function fetchedChatGptFromContext() {
+async function fetchedChatGptFromContext(emailResRequest: string) {
   const tabID = await sendToBackground({
     name: "getCurrentTabID"
   })
   // chatGPTからの返答を受け取る
   const res = await sendToBackground({
     name: "generateContextWIthChatGpt",
-    tabId: tabID
+    tabId: tabID,
+    body: {
+      text: emailResRequest
+    }
   })
   return res
 }

@@ -12,8 +12,8 @@ export const config: PlasmoCSConfig = {
 }
 
 /**
-   * 真ん中の大きなモーダル作成
-   */
+ * 真ん中の大きなモーダル作成
+ */
 function createModal() {
   const container = document.createElement("div")
   container.id ="chatGPT-for-Gmail"

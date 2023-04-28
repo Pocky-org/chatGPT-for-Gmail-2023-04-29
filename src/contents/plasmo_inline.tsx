@@ -8,11 +8,7 @@ import { createRoot } from "react-dom/client"
 
 import { sendToBackground } from "@plasmohq/messaging/"
 
-import ModalOverlay from "./modal_overlay"
-// 検証
 import ResModal from "./resModal"
-//成功したex
-import Main from "./testCreateOverlayDom"
 
 export const getStyle = () => {
   const style = document.createElement("style")
@@ -24,35 +20,26 @@ export const config: PlasmoCSConfig = {
   matches: ["https://mail.google.com/*"]
 }
 
-// function createOverlay(input: boolean) {
-//   const container = document.createElement("div")
-//   document.body.after(container)
-//   createRoot(container).render(
-//     <Main
-//       translatedText={"ここにテキストが入る"}
-//       originalText={"ここにテキストが入る"}
-//       targetLang={"JA"}
-//       showModal={input}
-//     />
-//   )
-// }
-
-function createModal() {
+/**
+   * 真ん中の大きなモーダル作成
+   */
+function createModal(ChatGptResponse: string) {
   const container = document.createElement("div")
   document.body.after(container)
-  createRoot(container).render(<ResModal showFlag={true} />)
+  createRoot(container).render(<ResModal showFlag={true} ChatGptResponse={ChatGptResponse} />)
 }
 
+
+/**
+ * ボタンのアンカー
+ */
 export const getInlineAnchor: PlasmoGetInlineAnchor = () =>
   document.querySelector(".gU.Up")
 
-// Use this to optimize unmount lookups
-// export const getShadowHostId = () => "plasmo-inline-example-unique-id"
 
 const PlasmoInline = () => {
   const [showModal, setShowModal] = useState(false)
   const [response, setContext] = useState("")
-  const [ChatGptResponce, setChatGptResponce] = useState("")
   const [isLoading, setIsLoading] = useState(false)
 
   const openModal = () => {
@@ -71,42 +58,35 @@ const PlasmoInline = () => {
     setContext(res)
   }
   //chatGptの返答スピードが遅いので,overlayの方で管理したほうが良さそう
-  const fetchedChatGptResponceToSetContext = async () => {
+  const fetchedChatGptResponseToSetContext = async () => {
     setIsLoading(true)
+
     const tabID = await sendToBackground({
       name: "getCurrentTabID"
     })
-    console.log("tabID: ", tabID)
+    // console.log("tabID: ", tabID)
+    // chatGPTからの返答を受け取る
     const res = await sendToBackground({
       name: "generateContextWIthChatGpt",
       tabId: tabID
     })
-    console.log("res", res)
-    setChatGptResponce(res)
+    createModal(res)
     setIsLoading(false)
   }
+
+  
   return (
     <>
-      {/* {showModal && (
-        <>
-          <ModalOverlay
-            showFlag={showModal}
-            setShowModal={setShowModal}
-            response={response}
-            ChatGptResponce={ChatGptResponce}
-            setIsLoading={setIsLoading}
-          />
-        </>
-      )} */}
-
       {/* Chat GPTに投げる */}
       <button
         className="ml-2"
-        onClick={() => {
+        onClick={async () => {
           openModal()
-          // fetchedChatGptResponceToSetContext() //一旦削除
+          await fetchedChatGptResponseToSetContext()
+          await  fetchedKoseiDataToSetContext()
+
           // createOverlay(true)
-          createModal()
+          // createModal(ChatGptResponse)
         }}>
         <img
           className="w-7 h-7 rounded-full"
@@ -118,9 +98,8 @@ const PlasmoInline = () => {
       {/* Chat GPT +文章校正に投げる */}
       <button
         className="ml-2"
-        onClick={() => {
+        onClick={async () => {
           openModal()
-          fetchedKoseiDataToSetContext()
         }}>
         <img
           className="w-7 h-7 rounded-full"

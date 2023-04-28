@@ -23,17 +23,32 @@ type ReadProofDataListProps = {
 }
 
 const ReadProofDataList: React.FC<ReadProofDataListProps> = ({ data = [] }) => {
+  const length = data.length
   return (
-    <div className="h-60 overflow-y-auto p-6 space-y-6 text-base text-gray-500 flex">
-      {data.map((value, index) => (
-        <div key={index}>
-          <div>{value.word}</div>
-          <div>
-            &lt;{value.rule}&gt;={">"} {value.suggestion}
+    <>
+      {length > 0 && (
+        <div className="p-6 gap-x-2 text-base text-gray-500 border border-gray-200 rounded-lg shadow ">
+          <div
+            className={`${
+              data.length > 0 ? "block" : "hidden"
+            } mt-4 block text-sm text-gray-900 font-bold`}>
+            改善できる可能性のあるもの👇
           </div>
+          {data.map((value, index) => (
+            <div
+              key={index}
+              className="flex py-2 text-sm text-gray-900 font-semibold gap-x-1">
+              <div className="mr-1">🟠</div>
+              <div className="">{value.word}</div>
+              <div>
+                &lt;{value.rule}&gt;
+                {value.suggestion && <span>➡︎ {value.suggestion}</span>}
+              </div>
+            </div>
+          ))}
         </div>
-      ))}
-    </div>
+      )}
+    </>
   )
 }
 

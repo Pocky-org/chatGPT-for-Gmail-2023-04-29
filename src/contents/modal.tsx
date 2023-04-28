@@ -23,31 +23,6 @@ export type ReadPloofData = {
   suggestion: string
   word: string
 }
-function changeToReadProofData(input: ReadPloofData[]) {
-  const fragment = document.createDocumentFragment()
-
-  // 各ReadPloofDataオブジェクトに対して、DOM要素を生成します。
-  input.forEach((value) => {
-    // div要素を作成します。
-    const div = document.createElement("div")
-
-    // word, rule, suggestionの内容をテキストノードとして追加します。
-    const wordTextNode = document.createTextNode(`${value.word} `)
-    const ruleTextNode = document.createTextNode(`<${value.rule}=> `)
-    const suggestionTextNode = document.createTextNode(`${value.suggestion}>`)
-
-    // div要素にテキストノードを追加します。
-    div.appendChild(wordTextNode)
-    div.appendChild(ruleTextNode)
-    div.appendChild(suggestionTextNode)
-
-    // フラグメントにdiv要素を追加します。
-    fragment.appendChild(div)
-  })
-
-  // DOM要素を含むフラグメントを返します。
-  return fragment
-}
 
 export default function Modal(arg: ModalProps) {
   const { showFlag } = arg
@@ -60,7 +35,8 @@ export default function Modal(arg: ModalProps) {
     container.remove()
   }
 
-  {/* <svg
+  {
+    /* <svg
     className="w-5 h-5"
     fill="currentColor"
     viewBox="0 0 20 20"
@@ -69,7 +45,8 @@ export default function Modal(arg: ModalProps) {
       fillRule="evenodd"
       d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
       clipRule="evenodd"></path>
-  </svg> */}
+  </svg> */
+  }
   return (
     <>
       <div
@@ -84,31 +61,31 @@ export default function Modal(arg: ModalProps) {
           transform: "translate(-50%, -50%)",
           backgroundColor: "white",
           zIndex: 1000,
-          padding: '24px',
+          padding: "24px",
           borderRadius: "8px"
-        }}
-        >
+        }}>
         <div className=" w-full">
           <div className=" w-full flex items-center justify-between">
             <div className="text-xl font-semibold text-gray-900">
               Response modal
             </div>
             <button
-                onClick={closeModal}
-                className="text-gray-400 flex justify-end bg-transparent w-5 hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5"
-                data-modal-hide="staticModal">
-                ×
+              onClick={closeModal}
+              className="text-gray-400 flex justify-end bg-transparent w-5 hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5"
+              data-modal-hide="staticModal">
+              ×
             </button>
           </div>
           <div id="overlay" className="bg-white rounded-lg shadow">
             <div id="modalContent">
-              <button onClick={async()=>{
-                const chatGptResponse = await fetchedChatGptFromContext()
-                setChatGPTContext(chatGptResponse.content)
-                console.log({
-                  chatGptResponse,
-                })
-              }}>
+              <button
+                onClick={async () => {
+                  const chatGptResponse = await fetchedChatGptFromContext()
+                  setChatGPTContext(chatGptResponse.content)
+                  console.log({
+                    chatGptResponse
+                  })
+                }}>
                 chatGPTのfetch
               </button>
               <div className=" w-[600px]">
@@ -128,7 +105,6 @@ export default function Modal(arg: ModalProps) {
                     chatGPTContext
                   )
 
-                  changeToReadProofData(proofreadResponse)
                   setProofreadContext(proofreadResponse)
                   console.log({
                     chatGPTContext,

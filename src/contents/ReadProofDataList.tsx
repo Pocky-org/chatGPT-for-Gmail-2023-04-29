@@ -29,7 +29,7 @@ const ReadProofDataList: React.FC<ReadProofDataListProps> = ({ data = [] }) => {
         <div key={index}>
           <div>{value.word}</div>
           <div>
-            &lt;{value.rule}&gt;= {value.suggestion}
+            &lt;{value.rule}&gt;={">"} {value.suggestion}
           </div>
         </div>
       ))}

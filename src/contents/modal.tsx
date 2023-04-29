@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react"
 import { sendToBackground } from "@plasmohq/messaging"
 
 import ReadProofDataList from "./ReadProofDataList"
+import AlertSecuritySection from "./alertSecuritySection"
 
 export const config: PlasmoCSConfig = {
   matches: ["https://mail.google.com/*"]
@@ -202,7 +203,7 @@ export default function Modal(arg: ModalProps) {
 
 function insertContext(context: string) {
   const replyClass = document.getElementsByClassName("Am Al editable")
-  replyClass[0].innerHTML = context.replace(/\n/g, "<br>");
+  replyClass[0].innerHTML = context.replace(/\n/g, "<br>")
 }
 
 /**

@@ -59,6 +59,7 @@ export default function Modal(arg: ModalProps) {
   const textareaRef = useRef(null)
   useEffect(() => {
     textareaRef.current.focus()
+    textareaRef.current.setSelectionRange(emailResRequest.length, emailResRequest.length);
   }, [])
 
   return (

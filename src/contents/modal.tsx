@@ -1,6 +1,6 @@
 import cssText from "data-text:~/src/style.css"
 import type { PlasmoCSConfig } from "plasmo"
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 
 import { sendToBackground } from "@plasmohq/messaging"
 
@@ -42,7 +42,9 @@ export default function Modal(arg: ModalProps) {
   const [proofreadContext, setProofreadContext] = useState<ReadPloofData[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [isShowAlert, setIsShowAlert] = useState<boolean>(false)
+  const [isClickedProofread, setIsClickedProofread] = useState<boolean>(false)
 
+  const scrollBottomRef = useRef(null)
   /**
    * 初回レンダリングのみ
    */
@@ -53,6 +55,10 @@ export default function Modal(arg: ModalProps) {
       const showAlertFlag = hasEmailContentPersonalInfo(context)
       setIsShowAlert(showAlertFlag)
     })()
+  }, [])
+  const textareaRef = useRef(null)
+  useEffect(() => {
+    textareaRef.current.focus()
   }, [])
 
   return (
@@ -89,7 +95,7 @@ export default function Modal(arg: ModalProps) {
               </svg>
             </button>
           </div>
-          <div id="overlay" className=" overflow-y-auto ">
+          <div id="overlay">
             <div id="modalContent" className="gap-y-2 grid">
               {/* メール内容 */}
               {emailContext && (
@@ -111,16 +117,17 @@ export default function Modal(arg: ModalProps) {
                 <div className="mt-2 block text-sm text-[#666]">
                   {emailContext ? (
                     // 返信
-                    <p>返答する内容を記述してください。</p>
+                    <p>返答する内容の趣旨を記述してください。</p>
                   ) : (
                     // 新規
-                    <p>送信する内容を記述してください。</p>
+                    <p>送信する内容の趣旨を記述してください。</p>
                   )}
                 </div>
                 {/* 返信prompt作成部分&ChatGPTgetchボタン */}
                 <div className="w-full flex items-center h-[45px]">
                   <div className="w-full">
                     <textarea
+                      ref={textareaRef}
                       rows={1}
                       className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2"
                       value={emailResRequest}
@@ -166,6 +173,9 @@ export default function Modal(arg: ModalProps) {
                             )
                           setChatGPTContext(chatGptResponse)
                           setIsLoading(false)
+                          setTimeout(() => {
+                            scrollBottomRef?.current?.scrollIntoView()
+                          }, 500)
                         }}>
                         <p className=" whitespace-nowrap text-xs font-medium">
                           返信を生成
@@ -199,6 +209,10 @@ export default function Modal(arg: ModalProps) {
                         const proofreadResponse =
                           await fetchedProofreadFromContext(chatGPTContext)
                         setProofreadContext(proofreadResponse)
+                        setIsClickedProofread(true)
+                        setTimeout(() => {
+                          scrollBottomRef?.current?.scrollIntoView()
+                        }, 500)
                       }}>
                       校正する
                     </button>
@@ -214,15 +228,24 @@ export default function Modal(arg: ModalProps) {
                 </div>
               )}
 
-              {proofreadContext ? (
+              {isClickedProofread ? (
                 <div>
-                  <ReadProofDataList data={proofreadContext} />
+                  {proofreadContext.length ? (
+                    <div>
+                      <ReadProofDataList data={proofreadContext} />
+                    </div>
+                  ) : (
+                    <p className=" text-base">
+                      校正すべき箇所はありませんでした。挿入してみましょう！
+                    </p>
+                  )}
                 </div>
               ) : (
                 <p>校正すべき箇所はありませんでした。</p>
               )}
             </div>
           </div>
+          <div ref={scrollBottomRef} />
         </div>
       </div>
     </>
@@ -325,9 +348,6 @@ async function fetchedProofreadFromContext(
     body: {
       text: chatGptResponse
     }
-  })
-  console.log({
-    generated: res
   })
   return JSON.parse(res)
 }

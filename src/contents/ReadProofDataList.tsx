@@ -27,10 +27,10 @@ const ReadProofDataList: React.FC<ReadProofDataListProps> = ({ data = [] }) => {
   return (
     <>
       {length > 0 && (
-        <div className="p-6 gap-x-2 text-base text-gray-500 border border-gray-200 rounded-lg shadow ">
+        <div className="pl-4 gap-x-2 text-base">
           <div
             className={`${
-              data.length > 0 ? "block" : "hidden"
+              length > 0 ? "block" : "hidden"
             } mt-4 block text-sm text-gray-900 font-bold`}>
             ✅ 改善できる可能性のあるもの
           </div>
@@ -38,7 +38,7 @@ const ReadProofDataList: React.FC<ReadProofDataListProps> = ({ data = [] }) => {
             <div
               key={index}
               className="flex py-2 text-sm text-gray-900 font-semibold gap-x-1">
-              <div className="mr-1">🟠</div>
+              <li/>
               <div className="">{value.word}</div>
               <div>
                 &lt;{value.rule}&gt;

@@ -27,12 +27,12 @@ export default function PlasmoInline() {
   return (
     <>
       <button
-        className="ml-2"
+        className="ml-1"
         onClick={async () => {
           setShowModal(true)
         }}>
         <img
-          className="w-7 h-7 rounded-full"
+          className="w-6 h-6 rounded-full"
           src={chatGptImage}
           alt="Some pretty cool image"
         />

@@ -201,7 +201,6 @@ export default function Modal(arg: ModalProps) {
                       }
                     />
                   </div>
-                  <AlertSecuritySection isShowAlert={isShowAlert} />
                   <div className=" mt-1 flex justify-end items-end text-sm">
                     <button
                       className="w-[15%] text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg px-4 py-2 focus:outline-none"

@@ -5,6 +5,7 @@ import React, { useEffect, useRef, useState } from "react"
 import { sendToBackground } from "@plasmohq/messaging"
 
 import ReadProofDataList from "./ReadProofDataList"
+import AlertSecuritySection from "./alertSecuritySection"
 
 export const config: PlasmoCSConfig = {
   matches: ["https://mail.google.com/*"]
@@ -40,9 +41,10 @@ export default function Modal(arg: ModalProps) {
   const [chatGPTContext, setChatGPTContext] = useState("")
   const [proofreadContext, setProofreadContext] = useState<ReadPloofData[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [isShowAlert, setIsShowAlert] = useState<boolean>(false)
   const [isClickedProofread, setIsClickedProofread] = useState<boolean>(false)
 
-  const scrollBottomRef = useRef(null);
+  const scrollBottomRef = useRef(null)
   /**
    * 初回レンダリングのみ
    */
@@ -50,12 +52,14 @@ export default function Modal(arg: ModalProps) {
     ;(async () => {
       const context = await getContext()
       setEmailContext(context)
+      const showAlertFlag = hasEmailContentPersonalInfo(context)
+      setIsShowAlert(showAlertFlag)
     })()
   }, [])
-  const textareaRef = useRef(null);
+  const textareaRef = useRef(null)
   useEffect(() => {
-    textareaRef.current.focus();
-  }, []);
+    textareaRef.current.focus()
+  }, [])
 
   return (
     <>
@@ -68,11 +72,9 @@ export default function Modal(arg: ModalProps) {
           <div className="w-full flex items-center justify-between">
             {/* タイトル */}
             <div className="flex items-end font-bold tracking-tight text-[#2FAF9C]">
-              <p className=' text-lg'>
-              Mail Butler
-              </p>
-              <p className=' ml-1 text-base'>
-              - write email with AI and get proofread
+              <p className=" text-lg">Mail Butler</p>
+              <p className=" ml-1 text-base">
+                - write email with AI and get proofread
               </p>
             </div>
             {/* 閉じるボタン */}
@@ -99,29 +101,26 @@ export default function Modal(arg: ModalProps) {
               {emailContext && (
                 <div>
                   <div className="text-sm  text-[#666]">対象メール</div>
+                  <AlertSecuritySection isShowAlert={isShowAlert} />
                   <div>
-                      <textarea
-                        rows={4}
-                        className="font-medium w-full overflow-y-auto block p-2.5 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
-                        value={emailContext}
-                        onChange={(event) => setEmailContext(event.target.value)}
-                      />
+                    <textarea
+                      rows={4}
+                      className="font-medium w-full overflow-y-auto block p-2.5 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                      value={emailContext}
+                      onChange={(event) => setEmailContext(event.target.value)}
+                    />
                   </div>
                 </div>
               )}
               {/* 返信内容 */}
               <div>
                 <div className="mt-2 block text-sm text-[#666]">
-                  {emailContext? (
+                  {emailContext ? (
                     // 返信
-                    <p>
-                      返答する内容の趣旨を記述してください。
-                    </p>
-                  ): (
+                    <p>返答する内容の趣旨を記述してください。</p>
+                  ) : (
                     // 新規
-                    <p>
-                      送信する内容の趣旨を記述してください。
-                    </p>
+                    <p>送信する内容の趣旨を記述してください。</p>
                   )}
                 </div>
                 {/* 返信prompt作成部分&ChatGPTgetchボタン */}
@@ -132,10 +131,12 @@ export default function Modal(arg: ModalProps) {
                       rows={1}
                       className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2"
                       value={emailResRequest}
-                      onChange={(event) => setEmailResRequest(event.target.value)}
+                      onChange={(event) =>
+                        setEmailResRequest(event.target.value)
+                      }
                     />
                   </div>
-                  <div className='max-w-[15%]'>
+                  <div className="max-w-[15%]">
                     {isLoading ? (
                       <button
                         disabled
@@ -156,7 +157,7 @@ export default function Modal(arg: ModalProps) {
                             fill="currentColor"
                           />
                         </svg>
-                        <p className=' whitespace-nowrap font-medium text-xs text-white'>
+                        <p className=" whitespace-nowrap font-medium text-xs text-white">
                           取得中...
                         </p>
                       </button>
@@ -165,19 +166,20 @@ export default function Modal(arg: ModalProps) {
                         className="ml-1 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300  rounded-lg  px-4 py-2 focus:outline-none"
                         onClick={async () => {
                           setIsLoading(true)
-                          const chatGptResponse = await fetchedChatGptFromContext(
-                            emailContext,
-                            emailResRequest
-                          )
+                          const chatGptResponse =
+                            await fetchedChatGptFromContext(
+                              emailContext,
+                              emailResRequest
+                            )
                           setChatGPTContext(chatGptResponse)
                           setIsLoading(false)
                           setTimeout(() => {
                             scrollBottomRef?.current?.scrollIntoView()
                           }, 500)
                         }}>
-                          <p className=' whitespace-nowrap text-xs font-medium'>
-                            返信を生成
-                          </p>
+                        <p className=" whitespace-nowrap text-xs font-medium">
+                          返信を生成
+                        </p>
                       </button>
                     )}
                   </div>
@@ -187,24 +189,25 @@ export default function Modal(arg: ModalProps) {
               {chatGPTContext && (
                 <div className="mt-2">
                   <div>
-                    <p className='block text-sm text-[#444]'>
+                    <p className="block text-sm text-[#444]">
                       返信内容（編集可）
                     </p>
                     <textarea
                       rows={10}
                       className="font-medium w-full overflow-y-auto  block p-2.5 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
                       value={chatGPTContext}
-                      onChange={(event) => setChatGPTContext(event.target.value)}
+                      onChange={(event) =>
+                        setChatGPTContext(event.target.value)
+                      }
                     />
                   </div>
-                  <div
-                    className=' mt-1 flex justify-end items-end text-sm'>
+                  <AlertSecuritySection isShowAlert={isShowAlert} />
+                  <div className=" mt-1 flex justify-end items-end text-sm">
                     <button
                       className="w-[15%] text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg px-4 py-2 focus:outline-none"
                       onClick={async () => {
-                        const proofreadResponse = await fetchedProofreadFromContext(
-                          chatGPTContext
-                        )
+                        const proofreadResponse =
+                          await fetchedProofreadFromContext(chatGPTContext)
                         setProofreadContext(proofreadResponse)
                         setIsClickedProofread(true)
                         setTimeout(() => {
@@ -225,24 +228,24 @@ export default function Modal(arg: ModalProps) {
                 </div>
               )}
 
-              {isClickedProofread?(
+              {isClickedProofread ? (
                 <div>
                   {proofreadContext.length ? (
                     <div>
                       <ReadProofDataList data={proofreadContext} />
                     </div>
-                  ):(
-                    <p className=' text-base'>
+                  ) : (
+                    <p className=" text-base">
                       校正すべき箇所はありませんでした。挿入してみましょう！
                     </p>
                   )}
                 </div>
-              ): (
-                <></>
+              ) : (
+                <p>校正すべき箇所はありませんでした。</p>
               )}
             </div>
           </div>
-          <div ref={scrollBottomRef}/>
+          <div ref={scrollBottomRef} />
         </div>
       </div>
     </>
@@ -251,7 +254,7 @@ export default function Modal(arg: ModalProps) {
 
 function insertContext(context: string) {
   const replyClass = document.getElementsByClassName("Am Al editable")
-  replyClass[0].innerHTML = context.replace(/\n/g, "<br>");
+  replyClass[0].innerHTML = context.replace(/\n/g, "<br>")
 }
 
 /**
@@ -294,6 +297,21 @@ const removeMessagePart = (input) => {
   const messageToRemove =
     /\.{3}\[メッセージの一部が表示されています\]\s{1,}メッセージ全体を表示/
   return email.replace(messageToRemove, "")
+}
+/**
+ * メールのセキュリティチェック
+ */
+function hasEmailContentPersonalInfo(input: string): boolean {
+  // emailContextの中にメールや電話番号が入っているかどうかをチェックする
+  // メールアドレスの正規表現
+  const emailRegex = /\S+@\S+\.\S+/
+
+  // 電話番号の正規表現 (この例では、国際電話番号も含まれます)
+  const phoneRegex =
+    /(\+\d{1,3}[-\.\s]?)?\(?\d{1,4}\)?[-\.\s]?\d{1,4}[-\.\s]?\d{1,9}/
+
+  // 文字列にメールアドレスまたは電話番号が含まれているかどうかをチェック
+  return emailRegex.test(input) || phoneRegex.test(input)
 }
 
 /**

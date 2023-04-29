@@ -1,4 +1,5 @@
-import pretzImage from "data-base64:~assets/pretz.jpeg"
+import chatGptImage from "data-base64:~assets/chatgpt.jpeg"
+// import pretzImage from "data-base64:~assets/pretz.jpeg"
 import cssText from "data-text:~/src/style.css"
 import type { PlasmoCSConfig, PlasmoGetInlineAnchor } from "plasmo"
 import React from "react"
@@ -16,11 +17,10 @@ export const config: PlasmoCSConfig = {
 export const getInlineAnchor: PlasmoGetInlineAnchor = () =>
   document.querySelector(".gU.Up")
 
-
-export default function  PlasmoInline () {
+export default function PlasmoInline() {
   const [showModal, setShowModal] = useState(false)
 
-  const closeModal =()=> {
+  const closeModal = () => {
     setShowModal(false)
   }
 
@@ -33,7 +33,7 @@ export default function  PlasmoInline () {
         }}>
         <img
           className="w-7 h-7 rounded-full"
-          src={pretzImage}
+          src={chatGptImage}
           alt="Some pretty cool image"
         />
       </button>
@@ -45,7 +45,6 @@ export default function  PlasmoInline () {
     </>
   )
 }
-
 
 export const getStyle = () => {
   const style = document.createElement("style")

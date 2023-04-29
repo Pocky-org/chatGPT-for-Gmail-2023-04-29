@@ -202,7 +202,7 @@ export default function Modal(arg: ModalProps) {
 
 function insertContext(context: string) {
   const replyClass = document.getElementsByClassName("Am Al editable")
-  replyClass[0].textContent = context
+  replyClass[0].innerHTML = context.replace(/\n/g, "<br>");
 }
 
 /**

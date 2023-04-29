@@ -241,7 +241,7 @@ export default function Modal(arg: ModalProps) {
                   )}
                 </div>
               ) : (
-                <p>校正すべき箇所はありませんでした。</p>
+                <></>
               )}
             </div>
           </div>
